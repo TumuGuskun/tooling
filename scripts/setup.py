@@ -26,17 +26,13 @@ def main():
     else:
         env_file_path = f"{Path.home()}/{env_choice}"
 
+    script_folder = os.path.dirname(os.path.realpath(__file__))
     with open(env_file_path, "r") as env_file:
-        skip_env_file_write = "export BOLD=false" in env_file.read()
+        skip_env_file_write = script_folder in env_file.read()
 
     if not skip_env_file_write:
         with open(env_file_path, "a") as env_file:
-            # stupid gum constants
-            env_file.write("export BOLD=false\n")
-            env_file.write("export UNDERLINE=false\n")
-
             # put the scripts file in path
-            script_folder = os.path.dirname(os.path.realpath(__file__))
             env_file.write(f'export PATH="$PATH:{script_folder}"\n')
 
         command = ["source", env_file_path]

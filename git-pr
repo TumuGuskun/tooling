@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+import re
+import subprocess
+import sys
+import webbrowser
+from git.repo import Repo
+from git.exc import InvalidGitRepositoryError
+from markdownify import markdownify
+from mistletoe import Document, HTMLRenderer
+
+from gum import gum_choose, gum_confirm, gum_input
+
+
+def create_pr(title: str, body: str, draft: bool) -> str:
+    command = ["gh", "pr", "create", f"--title={title}", f"--body={body}"]
+    if draft:
+        command.append("--draft")
+    result = subprocess.run(command, stdout=subprocess.PIPE, text=True).stdout.strip()
+    print(f"Successfully created PR here: {result}")
+    return result
+
+
+def get_repo() -> Repo:
+    try:
+        command = ["git", "rev-parse", "--show-toplevel"]
+        repo_path = subprocess.run(
+            command, stdout=subprocess.PIPE, text=True
+        ).stdout.strip()
+        return Repo(repo_path)
+    except InvalidGitRepositoryError as e:
+        sys.exit(1)
+
+
+def get_template_file(repo: Repo) -> Document:
+    template_files = repo.git.ls_files(".github/*.md").split()
+
+    if len(template_files) == 0:
+        raise Exception("No template files found in the .github folder")
+    elif len(template_files) == 1:
+        chosen_template = template_files[0]
+    else:
+        _, chosen_template = gum_choose(choices=template_files)
+
+    with open(f"{repo.git_dir}/../{chosen_template}", "r") as template_file:
+        template = Document.read(template_file.read())
+
+    return template
+
+
+def get_body_from_template(template: Document) -> str:
+    heading = ""
+    for child in template.walk(tokens=["List", "Heading"]):
+        node = child.node
+        if node.name == "List":
+            choices = []
+            for sub_child in node.walk(tokens=["RawText"]):
+                if "[ ]" in (content := sub_child.node.content):
+                    choices.append(content)
+
+            if len(choices) == 1:
+                choice = choices.pop()
+                index = 0
+                if not gum_confirm(message=choice):
+                    choice = None
+            elif choices:
+                index, choice = gum_choose(choices=choices, message=heading)
+            else:
+                choice = None
+                index = None
+
+            if choice:
+                _, words = str(choice).split("[ ] ")
+                if match := re.search(r"\[(.*)\]", words):
+                    reason = gum_input(message=match.group(1))
+                    words = re.sub(r"\[(.*)\]", f"[{reason}]", words)
+                node.children[index].children[0].children[0].content = f"[x] {words}"
+        elif node.name == "Heading":
+            heading = node.children[0].content
+            if "Description" in heading:
+                description = gum_input(message=heading)
+                node.children[0].content += f"\n{description}"
+
+    pr_body = markdownify(HTMLRenderer().render(template)).replace("*", "-")
+    return pr_body
+
+
+def main():
+    repo = get_repo()
+
+    template = get_template_file(repo=repo)
+    title = gum_input(message="Title: ", default=str(repo.head.commit.message.strip()))
+    pr_body = get_body_from_template(template=template)
+
+    draft = gum_confirm(message="Do you want to open this pr as a draft?")
+    url = create_pr(title=title, body=pr_body, draft=draft)
+    webbrowser.open(url)
+
+
+if __name__ == "__main__":
+    main()

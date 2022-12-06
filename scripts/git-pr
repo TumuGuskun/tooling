@@ -8,6 +8,7 @@ from git.exc import InvalidGitRepositoryError
 from markdownify import markdownify
 from mistletoe import Document, HTMLRenderer
 
+sys.path.append("..")
 from util.gum import gum_choose, gum_confirm, gum_input
 
 

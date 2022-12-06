@@ -13,7 +13,7 @@ def main():
     subprocess.run(command, stdout=subprocess.PIPE, text=True)
 
     # install pip reqs
-    command = ['pip', 'install', '-r', 'requirements.txt']
+    command = ['pip3', 'install', '-r', 'requirements.txt']
     subprocess.run(command, stdout=subprocess.PIPE, text=True)
 
     _, env_choice = gum_choose(choices=['.bashrc', '.zshrc', 'other'], message="Choose your env setup file")

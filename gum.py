@@ -1,6 +1,6 @@
 import subprocess
 import sys
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 
 def clear_last_line():
@@ -22,7 +22,7 @@ def gum_choose(
     message: Optional[str] = None,
     limit: int = 1,
     minimum: int = 1,
-) -> tuple[Optional[int], Optional[str | list[str]]]:
+) -> tuple[Optional[int], Optional[Union[str,list[str]]]]:
     norm_choices = [str(c).strip() for c in choices]
     if message:
         print(message)

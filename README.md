@@ -2,9 +2,7 @@
 
 ## Setup
 ```
-brew install gum
-pip install -r requirements.txt
-
+python3 scripts/setup.py
 ```
 
 

@@ -8,7 +8,7 @@ from git.exc import InvalidGitRepositoryError
 from markdownify import markdownify
 from mistletoe import Document, HTMLRenderer
 
-from gum import gum_choose, gum_confirm, gum_input
+from util.gum import gum_choose, gum_confirm, gum_input
 
 
 def create_pr(title: str, body: str, draft: bool) -> str:

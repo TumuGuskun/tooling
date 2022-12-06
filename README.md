@@ -1,6 +1,7 @@
 # tooling
 
 ## Setup
+Prereqs: `python 3`
 ```
 python3 scripts/setup.py
 ```

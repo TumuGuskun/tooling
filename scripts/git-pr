@@ -16,6 +16,8 @@ def create_pr(title: str, body: str, draft: bool) -> str:
     if draft:
         command.append("--draft")
     result = subprocess.run(command, stdout=subprocess.PIPE, text=True).stdout.strip()
+    if not result:
+        sys.exit(1)
     print(f"Successfully created PR here: {result}")
     return result
 

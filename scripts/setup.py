@@ -34,6 +34,9 @@ def main():
             # put the scripts file in path
             script_folder = os.path.dirname(os.path.realpath(__file__))
             env_file.write(f'export PATH="$PATH:{script_folder}"\n')
+        
+        command = ['source', env_file_path]
+        subprocess.run(command, stdout=subprocess.PIPE, text=True)
     
     command = ['gh', 'auth', 'login']
     subprocess.run(command)

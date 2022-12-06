@@ -4,7 +4,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-sys.path.append("..")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from util.gum import gum_choose, gum_input
 
 

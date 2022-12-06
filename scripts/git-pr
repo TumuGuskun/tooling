@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import re
 import subprocess
 import sys
@@ -8,7 +9,8 @@ from git.exc import InvalidGitRepositoryError
 from markdownify import markdownify
 from mistletoe import Document, HTMLRenderer
 
-sys.path.append("..")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(os.path.dirname(SCRIPT_DIR), ".."))
 from util.gum import gum_choose, gum_confirm, gum_input
 
 

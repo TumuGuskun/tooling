@@ -9,7 +9,7 @@ def clear_last_line():
 
 
 def gum_confirm(message: Optional[str] = None) -> bool:
-    command = ["gum", "confirm"]
+    command = ["gum", "confirm", "--bold=false", "--underline=false"]
     if message:
         command.append(message)
 
@@ -26,7 +26,7 @@ def gum_choose(
     norm_choices = [str(c).strip() for c in choices]
     if message:
         print(message)
-    command = ["gum", "choose"]
+    command = ["gum", "choose", "--bold=false", "--underline=false"]
     if limit > 0:
         command.append(f"--limit={limit}")
     else:
@@ -47,7 +47,7 @@ def gum_choose(
 
 
 def gum_input(message: Optional[str] = None, default: Optional[str] = None) -> str:
-    command = ["gum", "input"]
+    command = ["gum", "input", "--bold=false", "--underline=false"]
     if message:
         command.append(f"--prompt={message}: ")
     if default:
